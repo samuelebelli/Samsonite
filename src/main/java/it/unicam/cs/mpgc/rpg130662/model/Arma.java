@@ -23,6 +23,10 @@ public class Arma implements Oggetto {
             return "Aumenta l'attacco di " + BonusAttacco;
         }
 
+        public int getBonusAttacco() {
+            return BonusAttacco;
+        }
+
         @Override
         public String getDescrizione() {
             return "Aumenta l'attacco di " + BonusAttacco;

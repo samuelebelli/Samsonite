@@ -23,6 +23,10 @@ public class Pozione implements Oggetto{
         return Nome;
     }
 
+    public int getCura() {
+        return Cura;
+    }
+
     @Override
     public String getDescrizione() {
         return "Ripristina " + Cura + " punti vita";

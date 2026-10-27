@@ -8,17 +8,25 @@ public class Eroe {
     private int PuntiVitaGiocatore;
     private int AttaccoEroe;
 
-    /** Costruttore dove inizializzo i valori dell'eroe*/
+    /** Crea un eroe con la vita al massimo. */
     public Eroe(String nome, int puntiVitaMassimiGiocatore, int attacco) {
+        this(nome, puntiVitaMassimiGiocatore, puntiVitaMassimiGiocatore, attacco);
+    }
+
+    /** Crea un eroe in uno stato preciso, usato per ricaricare una partita salvata. */
+    public Eroe(String nome, int puntiVitaMassimiGiocatore, int puntiVitaAttuali, int attacco) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Il nome non può essere vuoto");
         }
         if (puntiVitaMassimiGiocatore <= 0) {
             throw new IllegalArgumentException("I punti vita massimi devono essere positivi");
         }
+        if (puntiVitaAttuali < 0 || puntiVitaAttuali > puntiVitaMassimiGiocatore) {
+            throw new IllegalArgumentException("I punti vita attuali non sono validi");
+        }
         this.Nome = nome;
         this.PuntiVitaMassimiGiocatore = puntiVitaMassimiGiocatore;
-        this.PuntiVitaGiocatore = puntiVitaMassimiGiocatore;
+        this.PuntiVitaGiocatore = puntiVitaAttuali;
         this.AttaccoEroe = attacco;
     }
 
