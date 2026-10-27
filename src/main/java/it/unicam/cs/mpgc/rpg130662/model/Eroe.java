@@ -8,6 +8,7 @@ public class Eroe {
     private int PuntiVitaGiocatore;
     private int attacco;
 
+    /** Costruttore dove inizializzo i valori dell'eroe*/
     public Eroe(String nome, int puntiVitaMassimiGiocatore, int attacco) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Il nome non può essere vuoto");
@@ -52,6 +53,7 @@ public class Eroe {
         PuntiVitaGiocatore = Math.max(0, PuntiVitaGiocatore - quantita);
     }
 
+    /** Aumenta i punti attacco */
     public void aumentaAttacco(int bonus) {
         attacco += bonus;
     }
