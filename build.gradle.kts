@@ -1,5 +1,10 @@
 plugins {
     id("java")
+    application
+}
+
+application {
+    mainClass.set("it.unicam.cs.mpgc.rpg130662.Main")
 }
 
 group = "org.example"
