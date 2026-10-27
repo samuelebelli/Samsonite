@@ -45,7 +45,7 @@ public class Eroe {
 
     public void cura(int quantita)
     {
-        PuntiVitaGiocatore = Math.min(PuntiVitaGiocatore, PuntiVitaGiocatore + quantita);
+        PuntiVitaGiocatore = Math.min(PuntiVitaMassimiGiocatore, PuntiVitaGiocatore + quantita);
     }
 
     /** Riduce i punti vita, controllando che non si puo scendere sotto lo '0' */
