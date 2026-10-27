@@ -2,9 +2,9 @@ package it.unicam.cs.mpgc.rpg130662.model;
 
 public class Mostro {
 
-    private final String Nome;
-    private int Vita;
-    private final int Attacco;
+    private final String NomeMostro;
+    private int PuntiVitaMostro;
+    private final int AttaccoMostro;
 
     public Mostro(String nome, int vita, int attacco){
         if (nome == null || nome.isBlank()){
@@ -16,25 +16,25 @@ public class Mostro {
         if (attacco < 0) {
             throw new IllegalArgumentException("L'attacco non può essere negativo");
         }
-        this.Nome = nome;
-        this.Vita = vita;
-        this.Attacco = attacco;
+        this.NomeMostro = nome;
+        this.PuntiVitaMostro = vita;
+        this.AttaccoMostro = attacco;
     }
 
     public String getNome() {
-        return Nome;
+        return NomeMostro;
     }
 
-    public int getVita() {
-        return Vita;
+    public int getPuntiVitaMostro() {
+        return PuntiVitaMostro;
     }
 
-    public int getAttacco() {
-        return Attacco;
+    public int getAttaccoMostro() {
+        return AttaccoMostro;
     }
 
     public boolean isVivo() {
-        return Vita > 0;
+        return PuntiVitaMostro > 0;
     }
 
     /** Riduce la vita del mostro, senza scendere sotto zero. */
@@ -42,6 +42,6 @@ public class Mostro {
         if (danno < 0) {
             throw new IllegalArgumentException("Il danno non può essere negativo");
         }
-        Vita = Math.max(0, Vita - danno);
+        PuntiVitaMostro = Math.max(0, PuntiVitaMostro - danno);
     }
 }

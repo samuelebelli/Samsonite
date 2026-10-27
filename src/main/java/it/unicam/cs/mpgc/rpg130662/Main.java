@@ -6,6 +6,7 @@ import it.unicam.cs.mpgc.rpg130662.model.Pozione;
 import it.unicam.cs.mpgc.rpg130662.model.Arma;
 import it.unicam.cs.mpgc.rpg130662.model.Inventario;
 import it.unicam.cs.mpgc.rpg130662.model.Mostro;
+import it.unicam.cs.mpgc.rpg130662.model.Combattimento;
 
 
 public class Main {
@@ -24,9 +25,9 @@ public class Main {
         System.out.println("Dopo la pozione: " + eroe.getPuntiVita());
 
         Oggetto spada = new Arma("Spada di ferro", 5);
-        System.out.println("Attacco iniziale: " + eroe.getAttacco());
+        System.out.println("Attacco iniziale: " + eroe.getAttaccoEroe());
         spada.usa(eroe);
-        System.out.println("Dopo l'arma: " + eroe.getAttacco());
+        System.out.println("Dopo l'arma: " + eroe.getAttaccoEroe());
 
         Inventario inventario = new Inventario(2);
         System.out.println(inventario.aggiungi(pozione));  // true
@@ -36,10 +37,18 @@ public class Main {
 
 
         Mostro goblin = new Mostro("Goblin", 30, 4);
-        System.out.println(goblin.getNome() + " vita: " + goblin.getVita());
+        System.out.println(goblin.getNome() + " vita: " + goblin.getPuntiVitaMostro());
         goblin.subisciDanno(12);
-        System.out.println("Dopo il colpo: " + goblin.getVita());
+        System.out.println("Dopo il colpo: " + goblin.getPuntiVitaMostro());
         goblin.subisciDanno(100);
         System.out.println("Vivo? " + goblin.isVivo());
+
+        Mostro orco = new Mostro("Orco", 40, 8);
+        Combattimento scontro = new Combattimento(eroe, orco);
+        while (!scontro.isFinito()) {
+            scontro.turno();
+            System.out.println("Eroe: " + eroe.getPuntiVita() + " | Orco: " + orco.getPuntiVitaMostro());
+        }
+        System.out.println("Ha vinto l'eroe? " + scontro.haVintoEroe());
     }
 }

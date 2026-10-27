@@ -6,7 +6,7 @@ public class Eroe {
     private final String Nome;
     private final int PuntiVitaMassimiGiocatore;
     private int PuntiVitaGiocatore;
-    private int attacco;
+    private int AttaccoEroe;
 
     /** Costruttore dove inizializzo i valori dell'eroe*/
     public Eroe(String nome, int puntiVitaMassimiGiocatore, int attacco) {
@@ -19,7 +19,7 @@ public class Eroe {
         this.Nome = nome;
         this.PuntiVitaMassimiGiocatore = puntiVitaMassimiGiocatore;
         this.PuntiVitaGiocatore = puntiVitaMassimiGiocatore;
-        this.attacco = attacco;
+        this.AttaccoEroe = attacco;
     }
 
     public String getNome() {
@@ -33,8 +33,8 @@ public class Eroe {
         return PuntiVitaMassimiGiocatore;
     }
 
-    public int getAttacco() {
-        return attacco;
+    public int getAttaccoEroe() {
+        return AttaccoEroe;
     }
 
     public boolean isVivo() {
@@ -55,6 +55,7 @@ public class Eroe {
 
     /** Aumenta i punti attacco */
     public void aumentaAttacco(int bonus) {
-        attacco += bonus;
+        AttaccoEroe += bonus;
     }
+
 }
