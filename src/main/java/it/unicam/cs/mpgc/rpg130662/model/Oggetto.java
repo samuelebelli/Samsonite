@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg130662.model;
 
 /**
- * Classe che permette di andare ad implementare
+ * Classe che permette di andare a implementare
  * l'oggetto che l'eroe può raccogliere e usare
  */
 public interface Oggetto {
