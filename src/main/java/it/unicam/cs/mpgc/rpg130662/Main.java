@@ -9,12 +9,15 @@ import it.unicam.cs.mpgc.rpg130662.model.Mostro;
 import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
 import it.unicam.cs.mpgc.rpg130662.model.Pozione;
 import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
+import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryFile;
+import it.unicam.cs.mpgc.rpg130662.persistenza.StatoPartita;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Eroe eroe = new Eroe("Samu", 100, 10);
         Oggetto pozione = new Pozione("Pozione piccola", 20);
 
@@ -74,5 +77,17 @@ public class Main {
             c.turno();
         }
         System.out.println("Ha vinto l'eroe? " + c.haVintoEroe());
+
+        // --- Prova del salvataggio ---
+        System.out.println("--- Salvataggio ---");
+        RepositoryFile repo = new RepositoryFile(Path.of("salvataggio.txt"));
+        repo.salva(gioco.getEroe(), gioco.getInventario());
+        StatoPartita caricato = repo.carica();
+        System.out.println("Caricato: " + caricato.eroe().getNome()
+                + ", vita " + caricato.eroe().getPuntiVita()
+                + ", attacco " + caricato.eroe().getAttaccoEroe()
+                + ", oggetti " + caricato.inventario().getOggetti().size());
     }
 }
+
+
