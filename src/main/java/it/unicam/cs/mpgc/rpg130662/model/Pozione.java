@@ -2,8 +2,8 @@ package it.unicam.cs.mpgc.rpg130662.model;
 
 public class Pozione implements Oggetto{
 
-    private final String Nome;
-    private final int Cura;
+    private final String nome;
+    private final int cura;
 
     /** Costruttore della Pozione che permette di inizializzare il nome e i
      * punti vita che vengono curati */
@@ -14,26 +14,26 @@ public class Pozione implements Oggetto{
         if (cura <= 0) {
             throw new IllegalArgumentException("La cura deve essere positiva");
         }
-        this.Nome = nome;
-        this.Cura = cura;
+        this.nome = nome;
+        this.cura = cura;
     }
 
     @Override
     public String getNome() {
-        return Nome;
+        return nome;
     }
 
     public int getCura() {
-        return Cura;
+        return cura;
     }
 
     @Override
     public String getDescrizione() {
-        return "Ripristina " + Cura + " punti vita";
+        return "Ripristina " + cura + " punti vita";
     }
 
     @Override
     public void usa(Eroe eroe) {
-        eroe.cura(Cura);
+        eroe.cura(cura);
     }
 }
