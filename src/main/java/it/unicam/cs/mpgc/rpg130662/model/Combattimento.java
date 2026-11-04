@@ -10,11 +10,15 @@ public class Combattimento {
         this.mostro = mostro;
     }
 
-    public void turno() {
-        mostro.subisciDanno(eroe.getAttaccoEroe());
+    public RisultatoTurno turno() {
+        int dannoAlMostro = eroe.getAttaccoEroe();
+        mostro.subisciDanno(dannoAlMostro);
+        int dannoAlEroe = 0;
         if (mostro.isVivo()) {
-            eroe.subisciDanno(mostro.getAttaccoMostro());
+            dannoAlEroe = mostro.getAttaccoMostro();
+            eroe.subisciDanno(dannoAlEroe);
         }
+        return new RisultatoTurno(dannoAlMostro, dannoAlEroe);
     }
 
     public boolean isFinito() {

@@ -5,6 +5,7 @@ public class Mostro {
     private final String nomeMostro;
     private int puntiVitaMostro;
     private final int attaccoMostro;
+    private final int puntiVitaMassimiMostro;
 
     public Mostro(String nome, int vita, int attacco){
         if (nome == null || nome.isBlank()){
@@ -19,6 +20,7 @@ public class Mostro {
         this.nomeMostro = nome;
         this.puntiVitaMostro = vita;
         this.attaccoMostro = attacco;
+        this.puntiVitaMassimiMostro = vita;
     }
 
     public String getNome() {
@@ -31,6 +33,10 @@ public class Mostro {
 
     public int getAttaccoMostro() {
         return attaccoMostro;
+    }
+
+    public int getPuntiVitaMassimiMostro() {
+        return puntiVitaMassimiMostro;
     }
 
     public boolean isVivo() {
