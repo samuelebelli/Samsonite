@@ -3,10 +3,10 @@ package it.unicam.cs.mpgc.rpg130662.model;
 /** Creazione del personaggio che sarà controllato dal giocatore */
 public class Eroe {
 
-    private final String Nome;
-    private final int PuntiVitaMassimiGiocatore;
-    private int PuntiVitaGiocatore;
-    private int AttaccoEroe;
+    private final String nome;
+    private final int puntiVitaMassimiGiocatore;
+    private int puntiVitaGiocatore;
+    private int attaccoEroe;
 
     /** Crea un eroe con la vita al massimo. */
     public Eroe(String nome, int puntiVitaMassimiGiocatore, int attacco) {
@@ -24,46 +24,46 @@ public class Eroe {
         if (puntiVitaAttuali < 0 || puntiVitaAttuali > puntiVitaMassimiGiocatore) {
             throw new IllegalArgumentException("I punti vita attuali non sono validi");
         }
-        this.Nome = nome;
-        this.PuntiVitaMassimiGiocatore = puntiVitaMassimiGiocatore;
-        this.PuntiVitaGiocatore = puntiVitaAttuali;
-        this.AttaccoEroe = attacco;
+        this.nome = nome;
+        this.puntiVitaMassimiGiocatore = puntiVitaMassimiGiocatore;
+        this.puntiVitaGiocatore = puntiVitaAttuali;
+        this.attaccoEroe = attacco;
     }
 
     public String getNome() {
-        return Nome;
+        return nome;
     }
     public int getPuntiVita() {
-        return PuntiVitaGiocatore;
+        return puntiVitaGiocatore;
     }
 
     public int getPuntiVitaMassimiGiocatore() {
-        return PuntiVitaMassimiGiocatore;
+        return puntiVitaMassimiGiocatore;
     }
 
     public int getAttaccoEroe() {
-        return AttaccoEroe;
+        return attaccoEroe;
     }
 
     public boolean isVivo() {
-        return PuntiVitaGiocatore > 0;
+        return puntiVitaGiocatore > 0;
     }
 
     /** Il personaggio recupera punti vita, punti che non possono superare il massimo */
 
     public void cura(int quantita)
     {
-        PuntiVitaGiocatore = Math.min(PuntiVitaMassimiGiocatore, PuntiVitaGiocatore + quantita);
+        puntiVitaGiocatore = Math.min(puntiVitaMassimiGiocatore, puntiVitaGiocatore + quantita);
     }
 
     /** Riduce i punti vita, controllando che non si puo scendere sotto lo '0' */
     public void subisciDanno(int quantita) {
-        PuntiVitaGiocatore = Math.max(0, PuntiVitaGiocatore - quantita);
+        puntiVitaGiocatore = Math.max(0, puntiVitaGiocatore - quantita);
     }
 
     /** Aumenta i punti attacco */
     public void aumentaAttacco(int bonus) {
-        AttaccoEroe += bonus;
+        attaccoEroe += bonus;
     }
 
 }

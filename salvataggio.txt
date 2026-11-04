@@ -1,3 +1,2 @@
-EROE;Samu;100;96;15
+EROE;Samu;100;100;15
 CAPIENZA;5
-POZIONE;Pozione piccola;20

@@ -24,4 +24,8 @@ public class Combattimento {
     public boolean haVintoEroe() {
         return eroe.isVivo() && !mostro.isVivo();
     }
+
+    public Mostro getMostro() {
+        return mostro;
+    }
 }
