@@ -1,11 +1,8 @@
 package it.unicam.cs.mpgc.rpg130662.controller;
 
-import it.unicam.cs.mpgc.rpg130662.model.Gioco;
-import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
+import it.unicam.cs.mpgc.rpg130662.model.*;
 import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryPartita;
 import it.unicam.cs.mpgc.rpg130662.persistenza.StatoPartita;
-import it.unicam.cs.mpgc.rpg130662.model.Combattimento;
-import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,11 +54,18 @@ public class ControllerPrincipale {
         return combattimento != null && !combattimento.isFinito();
     }
 
-    public void attacca() {
+    /** Esegue un turno e restituisce la riga di log da mostrare. */
+    public String attacca() {
         if (combattimento == null) {
             throw new IllegalStateException("Nessun combattimento in corso");
         }
-        combattimento.turno();
+        RisultatoTurno r = combattimento.turno();
+        String nomeMostro = combattimento.getMostro().getNome();
+        String riga = "Colpisci " + nomeMostro + " per " + r.dannoAlMostro();
+        if (r.dannoAlEroe() > 0) {
+            riga += " - " + nomeMostro + " ti colpisce per " + r.dannoAlEroe();
+        }
+        return riga;
     }
 
     public String getTestoMostro() {
@@ -80,7 +84,14 @@ public class ControllerPrincipale {
         return combattimento.haVintoEroe() ? "Hai vinto!" : "Sei stato sconfitto...";
     }
 
+    public boolean isSalvabile() {
+        return gioco.getEroe().isVivo();
+    }
+
     public void salva() throws IOException {
+        if (!isSalvabile()) {
+            throw new IllegalStateException("Non puoi salvare: l'eroe è morto");
+        }
         repository.salva(gioco.getEroe(), gioco.getInventario());
     }
 
@@ -90,4 +101,13 @@ public class ControllerPrincipale {
         gioco = new Gioco(stato.eroe(), stato.inventario(), gioco.getMostriDisponibili());
         combattimento = null;
     }
+
+    public void nuovaPartita() {
+        Inventario inventario = new Inventario(5);
+        inventario.aggiungi(new Pozione("Pozione piccola", 20));
+        inventario.aggiungi(new Arma("Spada di ferro", 5));
+        gioco = new Gioco(new Eroe("Samu", 100,10), inventario, gioco.getMostriDisponibili());
+        combattimento = null;
+    }
+
 }

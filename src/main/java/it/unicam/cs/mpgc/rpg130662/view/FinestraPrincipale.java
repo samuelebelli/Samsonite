@@ -46,6 +46,13 @@ public class FinestraPrincipale extends Application {
         configuraLista();
         configuraSceltaMostro();
 
+        Button nuova = new Button("Nuova partita");
+        nuova.setOnAction(e -> {
+            controller.nuovaPartita();
+            messaggio.setText("Nuova partita iniziata");
+            aggiorna();
+        });
+
         Button usa = new Button("Usa");
         usa.setOnAction(e -> {
             Oggetto scelto = lista.getSelectionModel().getSelectedItem();
@@ -63,7 +70,7 @@ public class FinestraPrincipale extends Application {
             try {
                 controller.salva();
                 messaggio.setText("Partita salvata");
-            } catch (IOException ex) {
+            } catch (IOException | IllegalStateException ex) {
                 messaggio.setText("Errore nel salvataggio: " + ex.getMessage());
             }
         });
@@ -97,16 +104,16 @@ public class FinestraPrincipale extends Application {
 
         attacca = new Button("Attacca");
         attacca.setOnAction(e -> {
-            controller.attacca();
+            String log = controller.attacca();
             String esito = controller.getEsito();
-            messaggio.setText(esito.isEmpty() ? "Colpo scambiato" : esito);
+            messaggio.setText(esito.isEmpty() ? log : log + "\n" + esito);
             aggiorna();
         });
 
         VBox radice = new VBox(10,
                 nome, vita, attacco,
                 lista,
-                new HBox(10, usa, salva, carica),
+                new HBox(10, usa, salva, carica, nuova),
                 new HBox(10, sceltaMostro, combatti, attacca),
                 mostro,
                 messaggio);
