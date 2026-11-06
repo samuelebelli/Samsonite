@@ -152,8 +152,13 @@ public class FinestraPrincipale extends Application {
         attacca = new Button("Attacca");
         attacca.setOnAction(e -> {
             String log = controller.attacca();
-            String esito = controller.getEsito();
-            messaggio.setText(esito.isEmpty() ? log : log + "\n" + esito);
+            if (controller.isCombattimentoFinito()){
+                scena.setRoot(controller.haiVinto()
+                        ? creaSchermataVittoria()
+                        :creaSchermataSconfitta());
+                return;
+            }
+            messaggio.setText(log);
             aggiorna();
         });
 
@@ -167,6 +172,53 @@ public class FinestraPrincipale extends Application {
         radice.setStyle("-fx-padding: 20;");
 
         aggiorna();
+        return radice;
+    }
+
+    /** Schermata mostrata quando l'eroe vince uno scontro. */
+    private Parent creaSchermataVittoria() {
+        Label titolo = new Label("VITTORIA!");
+        titolo.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+        Label testo = new Label("Hai sconfitto il mostro, " + controller.getTestoNome() + "! 🎉");
+
+        Button continua = new Button("Continua l'avventura");
+        continua.setOnAction(e -> {
+            controller.terminaCombattimento();
+            scena.setRoot(creaSchermataGioco());
+            messaggio.setText("Pronto per un nuovo scontro");
+        });
+
+        VBox radice = new VBox(15, titolo, testo, continua);
+        radice.setAlignment(Pos.CENTER);
+        return radice;
+    }
+
+    /** Schermata mostrata quando l'eroe viene sconfitto. */
+    private Parent creaSchermataSconfitta() {
+        Label titolo = new Label("SEI STATO SCONFITTO");
+        titolo.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+        Label testo = new Label(controller.getTestoNome() + " è caduto in battaglia... 😢");
+
+        Button riprova = new Button("Nuova partita");
+        riprova.setOnAction(e -> {
+            controller.terminaCombattimento();
+            scena.setRoot(creaSchermataIniziale());
+        });
+
+        Button carica = new Button("Carica ultimo salvataggio");
+        Label errore = new Label();
+        carica.setOnAction(e -> {
+            try {
+                controller.carica();
+                scena.setRoot(creaSchermataGioco());
+                messaggio.setText("Partita caricata");
+            } catch (IOException ex) {
+                errore.setText("Nessun salvataggio valido: " + ex.getMessage());
+            }
+        });
+
+        VBox radice = new VBox(15, titolo, testo, new HBox(10, riprova, carica), errore);
+        radice.setAlignment(Pos.CENTER);
         return radice;
     }
 

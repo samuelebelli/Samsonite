@@ -88,6 +88,19 @@ public class ControllerPrincipale {
         return gioco.getEroe().isVivo();
     }
 
+
+    public boolean isCombattimentoFinito(){
+        return combattimento != null && combattimento.isFinito();
+    }
+
+    public boolean haiVinto(){
+        return combattimento != null && combattimento.haVintoEroe();
+    }
+
+    public void terminaCombattimento(){
+        combattimento = null;
+    }
+
     public void salva() throws IOException {
         if (!isSalvabile()) {
             throw new IllegalStateException("Non puoi salvare: l'eroe è morto");
