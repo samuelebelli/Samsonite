@@ -102,11 +102,13 @@ public class ControllerPrincipale {
         combattimento = null;
     }
 
-    public void nuovaPartita() {
+    public void nuovaPartita(String nomeEroe) {
+        if (nomeEroe.contains(";"))
+            throw new IllegalArgumentException("Il nome non può contenere ';' ");
         Inventario inventario = new Inventario(5);
         inventario.aggiungi(new Pozione("Pozione piccola", 20));
         inventario.aggiungi(new Arma("Spada di ferro", 5));
-        gioco = new Gioco(new Eroe("Samu", 100,10), inventario, gioco.getMostriDisponibili());
+        gioco = new Gioco(new Eroe(nomeEroe, 100,10), inventario, gioco.getMostriDisponibili());
         combattimento = null;
     }
 

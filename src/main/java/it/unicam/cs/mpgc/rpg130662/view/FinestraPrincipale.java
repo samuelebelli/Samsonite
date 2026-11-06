@@ -10,12 +10,15 @@ import it.unicam.cs.mpgc.rpg130662.model.Pozione;
 import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
 import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryFile;
 import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -25,10 +28,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-/** Schermata principale: stato dell'eroe, inventario, combattimento e salvataggio. */
+/** Finestra del gioco: schermata iniziale (nome dell'eroe) e schermata di gioco. */
 public class FinestraPrincipale extends Application {
 
     private ControllerPrincipale controller;
+    private Scene scena;
 
     private final Label nome = new Label();
     private final Label vita = new Label();
@@ -42,16 +46,56 @@ public class FinestraPrincipale extends Application {
     @Override
     public void start(Stage stage) {
         controller = creaController();
+        scena = new Scene(creaSchermataIniziale(), 800, 600);
+        stage.setTitle("Samsonite");
+        stage.setScene(scena);
+        stage.show();
+    }
 
+    /** Prima schermata: il giocatore sceglie il nome e avvia la partita. */
+    private Parent creaSchermataIniziale() {
+        Label titolo = new Label("SAMSONITE");
+        titolo.setStyle("-fx-font-size: 32px; -fx-font-weight: bold;");
+
+        Label invito = new Label("Inserisci il tuo nome");
+        TextField campoNome = new TextField();
+        campoNome.setPromptText("Nome dell'eroe");
+        campoNome.setMaxWidth(250);
+
+        Label errore = new Label();
+
+        Button avvia = new Button("Avvia partita");
+        avvia.setOnAction(e -> {
+            try {
+                controller.nuovaPartita(campoNome.getText().trim());
+                scena.setRoot(creaSchermataGioco());
+                messaggio.setText("Buona avventura, " + controller.getTestoNome() + "!");
+            } catch (IllegalArgumentException ex) {
+                errore.setText(ex.getMessage());
+            }
+        });
+
+        Button carica = new Button("Carica partita");
+        carica.setOnAction(e -> {
+            try {
+                controller.carica();
+                scena.setRoot(creaSchermataGioco());
+                messaggio.setText("Partita caricata");
+            } catch (IOException ex) {
+                errore.setText("Nessun salvataggio valido: " + ex.getMessage());
+            }
+        });
+
+        VBox radice = new VBox(15, titolo, invito, campoNome,
+                new HBox(10, avvia, carica), errore);
+        radice.setAlignment(Pos.CENTER);
+        return radice;
+    }
+
+    /** Seconda schermata: eroe, inventario, combattimento e salvataggio. */
+    private Parent creaSchermataGioco() {
         configuraLista();
         configuraSceltaMostro();
-
-        Button nuova = new Button("Nuova partita");
-        nuova.setOnAction(e -> {
-            controller.nuovaPartita();
-            messaggio.setText("Nuova partita iniziata");
-            aggiorna();
-        });
 
         Button usa = new Button("Usa");
         usa.setOnAction(e -> {
@@ -85,6 +129,9 @@ public class FinestraPrincipale extends Application {
                 messaggio.setText("Errore nel caricamento: " + ex.getMessage());
             }
         });
+
+        Button nuova = new Button("Nuova partita");
+        nuova.setOnAction(e -> scena.setRoot(creaSchermataIniziale()));
 
         Button combatti = new Button("Combatti");
         combatti.setOnAction(e -> {
@@ -120,9 +167,7 @@ public class FinestraPrincipale extends Application {
         radice.setStyle("-fx-padding: 20;");
 
         aggiorna();
-        stage.setTitle("Samsonite");
-        stage.setScene(new Scene(radice, 800, 600));
-        stage.show();
+        return radice;
     }
 
     /** Mostra nome e descrizione di ogni oggetto nella lista. */
@@ -154,7 +199,7 @@ public class FinestraPrincipale extends Application {
         });
     }
 
-    /** Riallinea tutta la schermata allo stato attuale del gioco. */
+    /** Riallinea la schermata di gioco allo stato attuale. */
     private void aggiorna() {
         nome.setText(controller.getTestoNome());
         vita.setText(controller.getTestoVita());
@@ -164,13 +209,13 @@ public class FinestraPrincipale extends Application {
         attacca.setDisable(!controller.isInCombattimento());
     }
 
-    /** Partita di prova: la sostituiremo con una creazione vera. */
+    /** Partita segnaposto: viene sostituita da nuovaPartita() quando si preme "Avvia partita". */
     private ControllerPrincipale creaController() {
         Inventario inventario = new Inventario(5);
         inventario.aggiungi(new Pozione("Pozione piccola", 20));
         inventario.aggiungi(new Arma("Spada di ferro", 5));
         Gioco gioco = new Gioco(
-                new Eroe("Samu", 100, 10),
+                new Eroe("Eroe", 100, 10),
                 inventario,
                 List.of(new SchedaMostro("Goblin", 30, 8),
                         new SchedaMostro("Orco", 60, 15)));
