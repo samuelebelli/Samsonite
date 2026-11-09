@@ -1,0 +1,186 @@
+.root {
+    -fx-background-color: #140808;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+}
+
+.label {
+    -fx-text-fill: #f0dede;
+}
+
+.titolo {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff3b3b;
+}
+
+.titolo-piccolo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff3b3b;
+}
+
+.titolo-sezione {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8a6a6c;
+}
+
+.messaggio {
+    -fx-text-fill: #ffb347;
+    -fx-font-style: italic;
+}
+
+.errore {
+    -fx-text-fill: #ff8a8a;
+}
+
+.button {
+    -fx-background-color: #b3121c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #e01e2b;
+}
+
+.button:disabled {
+    -fx-background-color: #3a1a1c;
+    -fx-text-fill: #7a5a5c;
+}
+
+.bottone-attacco {
+    -fx-font-size: 18px;
+    -fx-padding: 12 18;
+}
+
+.text-field {
+    -fx-background-color: #241012;
+    -fx-text-fill: #f0dede;
+    -fx-prompt-text-fill: #8a6a6c;
+    -fx-background-radius: 6;
+    -fx-border-color: #b3121c;
+    -fx-border-radius: 6;
+    -fx-padding: 8;
+}
+
+.text-area {
+    -fx-control-inner-background: #140808;
+    -fx-text-fill: #f0dede;
+    -fx-background-radius: 6;
+    -fx-border-color: #3a1a1c;
+    -fx-border-radius: 6;
+}
+
+.text-area .content {
+    -fx-background-color: #140808;
+}
+
+.combo-box {
+    -fx-background-color: #241012;
+    -fx-background-radius: 6;
+    -fx-border-color: #5a1a1f;
+    -fx-border-radius: 6;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #f0dede;
+    -fx-background-color: transparent;
+}
+
+.schermata-gioco {
+    -fx-padding: 24;
+}
+
+.pannello {
+    -fx-background-color: #1c0c0e;
+    -fx-background-radius: 12;
+    -fx-border-color: #3a1a1c;
+    -fx-border-radius: 12;
+    -fx-padding: 16;
+}
+
+.nome-eroe {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffd86b;
+}
+
+.nome-mostro {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffb347;
+}
+
+/* Barre della vita */
+.progress-bar > .track {
+    -fx-background-color: #3a1a1c;
+    -fx-background-radius: 6;
+}
+
+.progress-bar > .bar {
+    -fx-background-radius: 6;
+    -fx-padding: 6;
+}
+
+.barra-vita {
+    -fx-accent: #3fb950;
+}
+
+.barra-mostro {
+    -fx-accent: #ff7b00;
+}
+
+/* Carte dell'inventario */
+.carta {
+    -fx-background-color: #241012;
+    -fx-background-radius: 10;
+    -fx-border-color: #5a1a1f;
+    -fx-border-radius: 10;
+    -fx-padding: 12;
+}
+
+.carta:hover {
+    -fx-border-color: #e01e2b;
+}
+
+.carta-icona {
+    -fx-font-size: 32px;
+}
+
+.carta-nome {
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffb347;
+}
+
+.carta-descrizione {
+    -fx-font-size: 12px;
+    -fx-text-fill: #c9a9ab;
+    -fx-text-alignment: center;
+}
+
+/* Vittoria: oro su rosso scuro caldo */
+.root.schermata-vittoria {
+    -fx-background-color: linear-gradient(to bottom, #5a1218, #2a0709);
+}
+
+.titolo-vittoria {
+    -fx-font-size: 44px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffd86b;
+}
+
+/* Sconfitta: nero e rosso sangue */
+.root.schermata-sconfitta {
+    -fx-background-color: linear-gradient(to bottom, #1a0404, #000000);
+}
+
+.titolo-sconfitta {
+    -fx-font-size: 44px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8f0f14;
+}

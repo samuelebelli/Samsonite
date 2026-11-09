@@ -16,10 +16,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -28,7 +30,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-/** Finestra del gioco: schermata iniziale (nome dell'eroe) e schermata di gioco. */
+/** Finestra del gioco: schermata iniziale, di gioco, di vittoria e di sconfitta. */
 public class FinestraPrincipale extends Application {
 
     private ControllerPrincipale controller;
@@ -39,14 +41,22 @@ public class FinestraPrincipale extends Application {
     private final Label attacco = new Label();
     private final Label mostro = new Label();
     private final Label messaggio = new Label();
-    private final ListView<Oggetto> lista = new ListView<>();
+    private final ProgressBar barraVita = new ProgressBar(1);
+    private final ProgressBar barraMostro = new ProgressBar(1);
+    private final TextArea registro = new TextArea();
+    private final FlowPane inventarioBox = new FlowPane(12, 12);
     private final ComboBox<SchedaMostro> sceltaMostro = new ComboBox<>();
+    private VBox boxMostro;
     private Button attacca;
+    private Button combatti;
 
     @Override
     public void start(Stage stage) {
         controller = creaController();
-        scena = new Scene(creaSchermataIniziale(), 800, 600);
+        messaggio.getStyleClass().add("messaggio");
+
+        scena = new Scene(creaSchermataIniziale(), 1000, 680);
+        scena.getStylesheets().add(getClass().getResource("/stile.css").toExternalForm());
         stage.setTitle("Samsonite");
         stage.setScene(scena);
         stage.show();
@@ -55,7 +65,7 @@ public class FinestraPrincipale extends Application {
     /** Prima schermata: il giocatore sceglie il nome e avvia la partita. */
     private Parent creaSchermataIniziale() {
         Label titolo = new Label("SAMSONITE");
-        titolo.setStyle("-fx-font-size: 32px; -fx-font-weight: bold;");
+        titolo.getStyleClass().add("titolo");
 
         Label invito = new Label("Inserisci il tuo nome");
         TextField campoNome = new TextField();
@@ -63,13 +73,15 @@ public class FinestraPrincipale extends Application {
         campoNome.setMaxWidth(250);
 
         Label errore = new Label();
+        errore.getStyleClass().add("errore");
 
         Button avvia = new Button("Avvia partita");
         avvia.setOnAction(e -> {
             try {
                 controller.nuovaPartita(campoNome.getText().trim());
-                scena.setRoot(creaSchermataGioco());
+                registro.clear();
                 messaggio.setText("Buona avventura, " + controller.getTestoNome() + "!");
+                scena.setRoot(creaSchermataGioco());
             } catch (IllegalArgumentException ex) {
                 errore.setText(ex.getMessage());
             }
@@ -79,36 +91,98 @@ public class FinestraPrincipale extends Application {
         carica.setOnAction(e -> {
             try {
                 controller.carica();
-                scena.setRoot(creaSchermataGioco());
+                registro.clear();
                 messaggio.setText("Partita caricata");
+                scena.setRoot(creaSchermataGioco());
             } catch (IOException ex) {
                 errore.setText("Nessun salvataggio valido: " + ex.getMessage());
             }
         });
 
-        VBox radice = new VBox(15, titolo, invito, campoNome,
-                new HBox(10, avvia, carica), errore);
+        HBox bottoni = new HBox(10, avvia, carica);
+        bottoni.setAlignment(Pos.CENTER);
+
+        VBox radice = new VBox(15, titolo, invito, campoNome, bottoni, errore);
         radice.setAlignment(Pos.CENTER);
         return radice;
     }
 
-    /** Seconda schermata: eroe, inventario, combattimento e salvataggio. */
+    /** Schermata di gioco a due colonne: eroe e inventario a sinistra, scontro a destra. */
     private Parent creaSchermataGioco() {
-        configuraLista();
         configuraSceltaMostro();
 
-        Button usa = new Button("Usa");
-        usa.setOnAction(e -> {
-            Oggetto scelto = lista.getSelectionModel().getSelectedItem();
-            if (scelto == null) {
-                messaggio.setText("Seleziona un oggetto");
+        Label titolo = new Label("SAMSONITE");
+        titolo.getStyleClass().add("titolo-piccolo");
+
+        // ---- Colonna sinistra: eroe e inventario ----
+        nome.getStyleClass().add("nome-eroe");
+        barraVita.getStyleClass().add("barra-vita");
+        barraVita.setMaxWidth(Double.MAX_VALUE);
+        inventarioBox.setPrefWrapLength(420);
+
+        VBox pannelloEroe = new VBox(8,
+                titoloSezione("EROE"), nome, vita, barraVita, attacco,
+                titoloSezione("INVENTARIO"), inventarioBox);
+        pannelloEroe.getStyleClass().add("pannello");
+        HBox.setHgrow(pannelloEroe, Priority.ALWAYS);
+
+        // ---- Colonna destra: scontro ----
+        combatti = new Button("Combatti");
+        combatti.setMaxWidth(Double.MAX_VALUE);
+        combatti.setOnAction(e -> {
+            SchedaMostro scelta = sceltaMostro.getValue();
+            if (scelta == null) {
+                messaggio.setText("Scegli un mostro");
                 return;
             }
-            controller.usaOggetto(scelto);
-            messaggio.setText("Hai usato " + scelto.getNome());
+            try {
+                controller.iniziaCombattimento(scelta);
+                registro.clear();
+                registro.appendText("Attenzione!!! Un " + scelta.nome() + " ti vuole colpire!\n");
+                messaggio.setText("Scontro iniziato!");
+            } catch (IllegalStateException ex) {
+                messaggio.setText(ex.getMessage());
+            }
             aggiorna();
         });
 
+        attacca = new Button("ATTACCA");
+        attacca.getStyleClass().add("bottone-attacco");
+        attacca.setMaxWidth(Double.MAX_VALUE);
+        attacca.setOnAction(e -> {
+            String log = controller.attacca();
+            registro.appendText(log + "\n");
+            if (controller.isCombattimentoFinito()) {
+                scena.setRoot(controller.haVintoEroe()
+                        ? creaSchermataVittoria()
+                        : creaSchermataSconfitta());
+                return;
+            }
+            aggiorna();
+        });
+
+        barraMostro.getStyleClass().add("barra-mostro");
+        barraMostro.setMaxWidth(Double.MAX_VALUE);
+        boxMostro = new VBox(6, mostro, barraMostro);
+        mostro.getStyleClass().add("nome-mostro");
+
+        registro.setEditable(false);
+        registro.setWrapText(true);
+        VBox.setVgrow(registro, Priority.ALWAYS);
+
+        sceltaMostro.setMaxWidth(Double.MAX_VALUE);
+
+        VBox pannelloScontro = new VBox(10,
+                titoloSezione("SCONTRO"), sceltaMostro, combatti,
+                boxMostro, attacca, registro);
+        pannelloScontro.getStyleClass().add("pannello");
+        pannelloScontro.setPrefWidth(380);
+        pannelloScontro.setMinWidth(380);
+
+        HBox centro = new HBox(16, pannelloEroe, pannelloScontro);
+        VBox.setVgrow(centro, Priority.ALWAYS);
+
+        // ---- Barra in basso ----
         Button salva = new Button("Salva");
         salva.setOnAction(e -> {
             try {
@@ -123,6 +197,7 @@ public class FinestraPrincipale extends Application {
         carica.setOnAction(e -> {
             try {
                 controller.carica();
+                registro.clear();
                 messaggio.setText("Partita caricata");
                 aggiorna();
             } catch (IOException ex) {
@@ -133,43 +208,10 @@ public class FinestraPrincipale extends Application {
         Button nuova = new Button("Nuova partita");
         nuova.setOnAction(e -> scena.setRoot(creaSchermataIniziale()));
 
-        Button combatti = new Button("Combatti");
-        combatti.setOnAction(e -> {
-            SchedaMostro scelta = sceltaMostro.getValue();
-            if (scelta == null) {
-                messaggio.setText("Scegli un mostro");
-                return;
-            }
-            try {
-                controller.iniziaCombattimento(scelta);
-                messaggio.setText("Scontro iniziato!");
-            } catch (IllegalStateException ex) {
-                messaggio.setText(ex.getMessage());
-            }
-            aggiorna();
-        });
+        HBox comandi = new HBox(10, salva, carica, nuova);
 
-        attacca = new Button("Attacca");
-        attacca.setOnAction(e -> {
-            String log = controller.attacca();
-            if (controller.isCombattimentoFinito()){
-                scena.setRoot(controller.haiVinto()
-                        ? creaSchermataVittoria()
-                        :creaSchermataSconfitta());
-                return;
-            }
-            messaggio.setText(log);
-            aggiorna();
-        });
-
-        VBox radice = new VBox(10,
-                nome, vita, attacco,
-                lista,
-                new HBox(10, usa, salva, carica, nuova),
-                new HBox(10, sceltaMostro, combatti, attacca),
-                mostro,
-                messaggio);
-        radice.setStyle("-fx-padding: 20;");
+        VBox radice = new VBox(14, titolo, centro, comandi, messaggio);
+        radice.getStyleClass().add("schermata-gioco");
 
         aggiorna();
         return radice;
@@ -178,26 +220,30 @@ public class FinestraPrincipale extends Application {
     /** Schermata mostrata quando l'eroe vince uno scontro. */
     private Parent creaSchermataVittoria() {
         Label titolo = new Label("VITTORIA!");
-        titolo.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+        titolo.getStyleClass().add("titolo-vittoria");
         Label testo = new Label("Hai sconfitto il mostro, " + controller.getTestoNome() + "! 🎉");
 
         Button continua = new Button("Continua l'avventura");
         continua.setOnAction(e -> {
             controller.terminaCombattimento();
-            scena.setRoot(creaSchermataGioco());
             messaggio.setText("Pronto per un nuovo scontro");
+            scena.setRoot(creaSchermataGioco());
         });
 
         VBox radice = new VBox(15, titolo, testo, continua);
         radice.setAlignment(Pos.CENTER);
+        radice.getStyleClass().add("schermata-vittoria");
         return radice;
     }
 
     /** Schermata mostrata quando l'eroe viene sconfitto. */
     private Parent creaSchermataSconfitta() {
         Label titolo = new Label("SEI STATO SCONFITTO");
-        titolo.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+        titolo.getStyleClass().add("titolo-sconfitta");
         Label testo = new Label(controller.getTestoNome() + " è caduto in battaglia... 😢");
+
+        Label errore = new Label();
+        errore.getStyleClass().add("errore");
 
         Button riprova = new Button("Nuova partita");
         riprova.setOnAction(e -> {
@@ -206,31 +252,65 @@ public class FinestraPrincipale extends Application {
         });
 
         Button carica = new Button("Carica ultimo salvataggio");
-        Label errore = new Label();
         carica.setOnAction(e -> {
             try {
                 controller.carica();
-                scena.setRoot(creaSchermataGioco());
+                registro.clear();
                 messaggio.setText("Partita caricata");
+                scena.setRoot(creaSchermataGioco());
             } catch (IOException ex) {
                 errore.setText("Nessun salvataggio valido: " + ex.getMessage());
             }
         });
 
-        VBox radice = new VBox(15, titolo, testo, new HBox(10, riprova, carica), errore);
+        HBox bottoni = new HBox(10, riprova, carica);
+        bottoni.setAlignment(Pos.CENTER);
+
+        VBox radice = new VBox(15, titolo, testo, bottoni, errore);
         radice.setAlignment(Pos.CENTER);
+        radice.getStyleClass().add("schermata-sconfitta");
         return radice;
     }
 
-    /** Mostra nome e descrizione di ogni oggetto nella lista. */
-    private void configuraLista() {
-        lista.setCellFactory(l -> new ListCell<>() {
-            @Override
-            protected void updateItem(Oggetto o, boolean vuota) {
-                super.updateItem(o, vuota);
-                setText(vuota || o == null ? null : o.getNome() + " - " + o.getDescrizione());
-            }
+    /** Intestazione di una sezione di pannello. */
+    private Label titoloSezione(String testo) {
+        Label l = new Label(testo);
+        l.getStyleClass().add("titolo-sezione");
+        return l;
+    }
+
+    /** Ricostruisce le carte dell'inventario in base allo stato attuale. */
+    private void ricostruisciInventario() {
+        inventarioBox.getChildren().clear();
+        for (Oggetto o : controller.getOggetti()) {
+            inventarioBox.getChildren().add(creaCarta(o));
+        }
+    }
+
+    /** Una carta per oggetto: icona, nome, descrizione e bottone Usa. */
+    private VBox creaCarta(Oggetto o) {
+        String icona = o instanceof Pozione ? "🧪" : o instanceof Arma ? "⚔" : "🎒";
+
+        Label iconaLabel = new Label(icona);
+        iconaLabel.getStyleClass().add("carta-icona");
+        Label nomeLabel = new Label(o.getNome());
+        nomeLabel.getStyleClass().add("carta-nome");
+        Label descrizione = new Label(o.getDescrizione());
+        descrizione.setWrapText(true);
+        descrizione.getStyleClass().add("carta-descrizione");
+
+        Button usa = new Button("Usa");
+        usa.setOnAction(e -> {
+            controller.usaOggetto(o);
+            messaggio.setText("Hai usato " + o.getNome());
+            aggiorna();
         });
+
+        VBox carta = new VBox(6, iconaLabel, nomeLabel, descrizione, usa);
+        carta.setAlignment(Pos.CENTER);
+        carta.setPrefWidth(150);
+        carta.getStyleClass().add("carta");
+        return carta;
     }
 
     /** Riempie il menu dei mostri e ne definisce il testo. */
@@ -256,12 +336,20 @@ public class FinestraPrincipale extends Application {
         nome.setText(controller.getTestoNome());
         vita.setText(controller.getTestoVita());
         attacco.setText(controller.getTestoAttacco());
-        lista.getItems().setAll(controller.getOggetti());
+        barraVita.setProgress(controller.getFrazioneVita());
+        ricostruisciInventario();
+
+        boolean inScontro = controller.isInCombattimento();
+        boxMostro.setVisible(inScontro);
+        boxMostro.setManaged(inScontro);
         mostro.setText(controller.getTestoMostro());
-        attacca.setDisable(!controller.isInCombattimento());
+        barraMostro.setProgress(controller.getFrazioneVitaMostro());
+        attacca.setDisable(!inScontro);
+        combatti.setDisable(inScontro);
+        sceltaMostro.setDisable(inScontro);
     }
 
-    /** Partita segnaposto: viene sostituita da nuovaPartita() quando si preme "Avvia partita". */
+    /** Partita segnaposto: viene sostituita da nuovaPartita() con "Avvia partita". */
     private ControllerPrincipale creaController() {
         Inventario inventario = new Inventario(5);
         inventario.aggiungi(new Pozione("Pozione piccola", 20));

@@ -1,31 +1,40 @@
 package it.unicam.cs.mpgc.rpg130662.controller;
 
-import it.unicam.cs.mpgc.rpg130662.model.*;
+import it.unicam.cs.mpgc.rpg130662.model.Arma;
+import it.unicam.cs.mpgc.rpg130662.model.Combattimento;
+import it.unicam.cs.mpgc.rpg130662.model.Eroe;
+import it.unicam.cs.mpgc.rpg130662.model.Gioco;
+import it.unicam.cs.mpgc.rpg130662.model.Inventario;
+import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
+import it.unicam.cs.mpgc.rpg130662.model.Pozione;
+import it.unicam.cs.mpgc.rpg130662.model.RisultatoTurno;
+import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
 import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryPartita;
 import it.unicam.cs.mpgc.rpg130662.persistenza.StatoPartita;
 
 import java.io.IOException;
 import java.util.List;
 
-
+/** Collega la view al model: la view non tocca mai direttamente Eroe o Inventario. */
 public class ControllerPrincipale {
 
     private Gioco gioco;
     private final RepositoryPartita repository;
     private Combattimento combattimento;
+    private int vitaMassimaMostro;
 
-
-    public ControllerPrincipale(Gioco gioco, RepositoryPartita repository)
-    {
+    public ControllerPrincipale(Gioco gioco, RepositoryPartita repository) {
         this.gioco = gioco;
         this.repository = repository;
     }
 
-    public String getTestoNome(){
+    // ---- Dati da mostrare ----
+
+    public String getTestoNome() {
         return gioco.getEroe().getNome();
     }
 
-    public String getTestoVita(){
+    public String getTestoVita() {
         return "Vita: " + gioco.getEroe().getPuntiVita()
                 + "/" + gioco.getEroe().getPuntiVitaMassimiGiocatore();
     }
@@ -34,24 +43,60 @@ public class ControllerPrincipale {
         return "Attacco: " + gioco.getEroe().getAttaccoEroe();
     }
 
-    public List<Oggetto> getOggetti() {
-        return gioco.getInventario().getOggetti();
+    public double getFrazioneVita() {
+        return (double) gioco.getEroe().getPuntiVita()
+                / gioco.getEroe().getPuntiVitaMassimiGiocatore();
     }
 
-    public void usaOggetto(Oggetto oggetto) {
-        gioco.usaOggetto(oggetto);
+    public List<Oggetto> getOggetti() {
+        return gioco.getInventario().getOggetti();
     }
 
     public List<SchedaMostro> getMostriDisponibili() {
         return gioco.getMostriDisponibili();
     }
 
+    public String getTestoMostro() {
+        if (combattimento == null) {
+            return "";
+        }
+        return combattimento.getMostro().getNome()
+                + " - Vita: " + combattimento.getMostro().getPuntiVitaMostro();
+    }
+
+    public double getFrazioneVitaMostro() {
+        if (combattimento == null) {
+            return 0;
+        }
+        return (double) combattimento.getMostro().getPuntiVitaMostro() / vitaMassimaMostro;
+    }
+
+    // ---- Azioni di gioco ----
+
+    public void usaOggetto(Oggetto oggetto) {
+        gioco.usaOggetto(oggetto);
+    }
+
     public void iniziaCombattimento(SchedaMostro scheda) {
         combattimento = gioco.iniziaCombattimento(scheda);
+        vitaMassimaMostro = scheda.vita();
     }
 
     public boolean isInCombattimento() {
         return combattimento != null && !combattimento.isFinito();
+    }
+
+    public boolean isCombattimentoFinito() {
+        return combattimento != null && combattimento.isFinito();
+    }
+
+    public boolean haVintoEroe() {
+        return combattimento != null && combattimento.haVintoEroe();
+    }
+
+    /** Chiude lo scontro concluso, per tornare alla schermata di gioco. */
+    public void terminaCombattimento() {
+        combattimento = null;
     }
 
     /** Esegue un turno e restituisce la riga di log da mostrare. */
@@ -68,37 +113,21 @@ public class ControllerPrincipale {
         return riga;
     }
 
-    public String getTestoMostro() {
-        if (combattimento == null) {
-            return "";
-        }
-        return combattimento.getMostro().getNome()
-                + " - Vita: " + combattimento.getMostro().getPuntiVitaMostro();
-    }
+    // ---- Partita e salvataggio ----
 
-    /** Messaggio di esito se lo scontro è finito, altrimenti stringa vuota. */
-    public String getEsito() {
-        if (combattimento == null || !combattimento.isFinito()) {
-            return "";
+    public void nuovaPartita(String nomeEroe) {
+        if (nomeEroe.contains(";")) {
+            throw new IllegalArgumentException("Il nome non può contenere ';'");
         }
-        return combattimento.haVintoEroe() ? "Hai vinto!" : "Sei stato sconfitto...";
+        Inventario inventario = new Inventario(5);
+        inventario.aggiungi(new Pozione("Pozione piccola", 20));
+        inventario.aggiungi(new Arma("Spada di ferro", 5));
+        gioco = new Gioco(new Eroe(nomeEroe, 100, 10), inventario, gioco.getMostriDisponibili());
+        combattimento = null;
     }
 
     public boolean isSalvabile() {
         return gioco.getEroe().isVivo();
-    }
-
-
-    public boolean isCombattimentoFinito(){
-        return combattimento != null && combattimento.isFinito();
-    }
-
-    public boolean haiVinto(){
-        return combattimento != null && combattimento.haVintoEroe();
-    }
-
-    public void terminaCombattimento(){
-        combattimento = null;
     }
 
     public void salva() throws IOException {
@@ -114,15 +143,4 @@ public class ControllerPrincipale {
         gioco = new Gioco(stato.eroe(), stato.inventario(), gioco.getMostriDisponibili());
         combattimento = null;
     }
-
-    public void nuovaPartita(String nomeEroe) {
-        if (nomeEroe.contains(";"))
-            throw new IllegalArgumentException("Il nome non può contenere ';' ");
-        Inventario inventario = new Inventario(5);
-        inventario.aggiungi(new Pozione("Pozione piccola", 20));
-        inventario.aggiungi(new Arma("Spada di ferro", 5));
-        gioco = new Gioco(new Eroe(nomeEroe, 100,10), inventario, gioco.getMostriDisponibili());
-        combattimento = null;
-    }
-
 }

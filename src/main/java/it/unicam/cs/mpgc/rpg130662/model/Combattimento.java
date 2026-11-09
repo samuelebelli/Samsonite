@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg130662.model;
 
+/** Uno scontro a turni tra l'eroe e un mostro. */
 public class Combattimento {
 
     private final Eroe eroe;
@@ -10,9 +11,11 @@ public class Combattimento {
         this.mostro = mostro;
     }
 
+    /** L'eroe colpisce; se il mostro è ancora vivo, risponde. */
     public RisultatoTurno turno() {
         int dannoAlMostro = eroe.getAttaccoEroe();
         mostro.subisciDanno(dannoAlMostro);
+
         int dannoAlEroe = 0;
         if (mostro.isVivo()) {
             dannoAlEroe = mostro.getAttaccoMostro();
