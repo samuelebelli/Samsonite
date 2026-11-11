@@ -14,7 +14,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
@@ -24,7 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
+
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,10 +44,9 @@ public class FinestraPrincipale extends Application {
     private final ProgressBar barraMostro = new ProgressBar(1);
     private final TextArea registro = new TextArea();
     private final FlowPane inventarioBox = new FlowPane(12, 12);
-    private final ComboBox<SchedaMostro> sceltaMostro = new ComboBox<>();
     private VBox boxMostro;
     private Button attacca;
-    private Button combatti;
+    private final HBox mostriBox = new HBox(12);
 
     @Override
     public void start(Stage stage) {
@@ -109,7 +107,7 @@ public class FinestraPrincipale extends Application {
 
     /** Schermata di gioco a due colonne: eroe e inventario a sinistra, scontro a destra. */
     private Parent creaSchermataGioco() {
-        configuraSceltaMostro();
+        ricostruisciMostri();
 
         Label titolo = new Label("SAMSONITE");
         titolo.getStyleClass().add("titolo-piccolo");
@@ -125,26 +123,6 @@ public class FinestraPrincipale extends Application {
                 titoloSezione("INVENTARIO"), inventarioBox);
         pannelloEroe.getStyleClass().add("pannello");
         HBox.setHgrow(pannelloEroe, Priority.ALWAYS);
-
-        // ---- Colonna destra: scontro ----
-        combatti = new Button("Combatti");
-        combatti.setMaxWidth(Double.MAX_VALUE);
-        combatti.setOnAction(e -> {
-            SchedaMostro scelta = sceltaMostro.getValue();
-            if (scelta == null) {
-                messaggio.setText("Scegli un mostro");
-                return;
-            }
-            try {
-                controller.iniziaCombattimento(scelta);
-                registro.clear();
-                registro.appendText("Attenzione!!! Un " + scelta.nome() + " ti vuole colpire!\n");
-                messaggio.setText("Scontro iniziato!");
-            } catch (IllegalStateException ex) {
-                messaggio.setText(ex.getMessage());
-            }
-            aggiorna();
-        });
 
         attacca = new Button("ATTACCA");
         attacca.getStyleClass().add("bottone-attacco");
@@ -170,10 +148,9 @@ public class FinestraPrincipale extends Application {
         registro.setWrapText(true);
         VBox.setVgrow(registro, Priority.ALWAYS);
 
-        sceltaMostro.setMaxWidth(Double.MAX_VALUE);
 
         VBox pannelloScontro = new VBox(10,
-                titoloSezione("SCONTRO"), sceltaMostro, combatti,
+                titoloSezione("SCONTRO"), mostriBox,
                 boxMostro, attacca, registro);
         pannelloScontro.getStyleClass().add("pannello");
         pannelloScontro.setPrefWidth(380);
@@ -313,22 +290,44 @@ public class FinestraPrincipale extends Application {
         return carta;
     }
 
-    /** Riempie il menu dei mostri e ne definisce il testo. */
-    private void configuraSceltaMostro() {
-        sceltaMostro.getItems().setAll(controller.getMostriDisponibili());
-        sceltaMostro.setPromptText("Scegli un mostro");
-        sceltaMostro.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(SchedaMostro s) {
-                return s == null ? "" : s.nome() + " (vita " + s.vita()
-                        + ", attacco " + s.attacco() + ")";
-            }
+    /** Crea una carta per ogni mostro tra cui scegliere. */
+    private void ricostruisciMostri() {
+        mostriBox.getChildren().clear();
+        String[] icone = {"👺", "👹", "🐉"};
+        int i = 0;
+        for (SchedaMostro scheda : controller.getMostriDisponibili()) {
+            mostriBox.getChildren().add(creaCartaMostro(scheda, icone[i % icone.length]));
+            i++;
+        }
+    }
 
-            @Override
-            public SchedaMostro fromString(String testo) {
-                return null;
+    /** Una carta per mostro: icona, nome, statistiche e bottone Combatti. */
+    private VBox creaCartaMostro(SchedaMostro scheda, String icona) {
+        Label iconaLabel = new Label(icona);
+        iconaLabel.getStyleClass().add("carta-icona");
+        Label nomeLabel = new Label(scheda.nome());
+        nomeLabel.getStyleClass().add("carta-nome");
+        Label statistiche = new Label("Vita " + scheda.vita() + "  ·  Attacco " + scheda.attacco());
+        statistiche.getStyleClass().add("carta-descrizione");
+
+        Button combatti = new Button("Combatti");
+        combatti.setOnAction(e -> {
+            try {
+                controller.iniziaCombattimento(scheda);
+                registro.clear();
+                registro.appendText("Un " + scheda.nome() + " ti sbarra la strada!\n");
+                messaggio.setText("Scontro iniziato!");
+            } catch (IllegalStateException ex) {
+                messaggio.setText(ex.getMessage());
             }
+            aggiorna();
         });
+
+        VBox carta = new VBox(6, iconaLabel, nomeLabel, statistiche, combatti);
+        carta.setAlignment(Pos.CENTER);
+        carta.setPrefWidth(160);
+        carta.getStyleClass().addAll("carta", "carta-mostro");
+        return carta;
     }
 
     /** Riallinea la schermata di gioco allo stato attuale. */
@@ -345,8 +344,8 @@ public class FinestraPrincipale extends Application {
         mostro.setText(controller.getTestoMostro());
         barraMostro.setProgress(controller.getFrazioneVitaMostro());
         attacca.setDisable(!inScontro);
-        combatti.setDisable(inScontro);
-        sceltaMostro.setDisable(inScontro);
+        mostriBox.setVisible(!inScontro);
+        mostriBox.setManaged(!inScontro);
     }
 
     /** Partita segnaposto: viene sostituita da nuovaPartita() con "Avvia partita". */

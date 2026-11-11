@@ -184,3 +184,12 @@
     -fx-font-weight: bold;
     -fx-text-fill: #8f0f14;
 }
+
+.carta-mostro {
+    -fx-border-color: #7a1a1f;
+}
+
+.carta-mostro:hover {
+    -fx-border-color: #ff7b00;
+    -fx-background-color: #2e1214;
+}
