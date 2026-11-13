@@ -1,14 +1,6 @@
 package it.unicam.cs.mpgc.rpg130662.controller;
 
-import it.unicam.cs.mpgc.rpg130662.model.Arma;
-import it.unicam.cs.mpgc.rpg130662.model.Combattimento;
-import it.unicam.cs.mpgc.rpg130662.model.Eroe;
-import it.unicam.cs.mpgc.rpg130662.model.Gioco;
-import it.unicam.cs.mpgc.rpg130662.model.Inventario;
-import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
-import it.unicam.cs.mpgc.rpg130662.model.Pozione;
-import it.unicam.cs.mpgc.rpg130662.model.RisultatoTurno;
-import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
+import it.unicam.cs.mpgc.rpg130662.model.*;
 import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryPartita;
 import it.unicam.cs.mpgc.rpg130662.persistenza.StatoPartita;
 
@@ -122,6 +114,8 @@ public class ControllerPrincipale {
         Inventario inventario = new Inventario(5);
         inventario.aggiungi(new Pozione("Pozione piccola", 20));
         inventario.aggiungi(new Arma("Spada di ferro", 5));
+        inventario.aggiungi(new PozioneTotale("Elisir completo"));
+        inventario.aggiungi(new ArmaMonouso("Spada di diamante", 30));
         gioco = new Gioco(new Eroe(nomeEroe, 100, 10), inventario, gioco.getMostriDisponibili());
         combattimento = null;
     }

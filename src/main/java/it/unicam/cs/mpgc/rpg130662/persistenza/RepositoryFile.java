@@ -1,10 +1,6 @@
 package it.unicam.cs.mpgc.rpg130662.persistenza;
 
-import it.unicam.cs.mpgc.rpg130662.model.Arma;
-import it.unicam.cs.mpgc.rpg130662.model.Eroe;
-import it.unicam.cs.mpgc.rpg130662.model.Inventario;
-import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
-import it.unicam.cs.mpgc.rpg130662.model.Pozione;
+import it.unicam.cs.mpgc.rpg130662.model.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +31,11 @@ public class RepositoryFile implements RepositoryPartita {
                 righe.add("ARMA;" + a.getNome() + ";" + a.getBonusAttacco());
             } else if (o instanceof Pozione p) {
                 righe.add("POZIONE;" + p.getNome() + ";" + p.getCura());
-            }
+            } else if (o instanceof PozioneTotale t) {
+            righe.add("POZIONETOTALE;" + t.getNome());
+            } else if (o instanceof ArmaMonouso m) {
+            righe.add("ARMAMONOUSO;" + m.getNome() + ";" + m.getDanno());
+        }
         }
         Files.write(percorso, righe);
     }
@@ -57,6 +57,8 @@ public class RepositoryFile implements RepositoryPartita {
                 case "CAPIENZA" -> inventario = new Inventario(Integer.parseInt(campi[1]));
                 case "ARMA" -> oggetti.add(new Arma(campi[1], Integer.parseInt(campi[2])));
                 case "POZIONE" -> oggetti.add(new Pozione(campi[1], Integer.parseInt(campi[2])));
+                case "POZIONETOTALE" -> oggetti.add(new PozioneTotale(campi[1]));
+                case "ARMAMONOUSO" -> oggetti.add(new ArmaMonouso(campi[1], Integer.parseInt(campi[2])));
                 default -> throw new IOException("Riga non riconosciuta: " + riga);
             }
         }

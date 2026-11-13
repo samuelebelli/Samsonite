@@ -1,13 +1,7 @@
 package it.unicam.cs.mpgc.rpg130662.view;
 
 import it.unicam.cs.mpgc.rpg130662.controller.ControllerPrincipale;
-import it.unicam.cs.mpgc.rpg130662.model.Arma;
-import it.unicam.cs.mpgc.rpg130662.model.Eroe;
-import it.unicam.cs.mpgc.rpg130662.model.Gioco;
-import it.unicam.cs.mpgc.rpg130662.model.Inventario;
-import it.unicam.cs.mpgc.rpg130662.model.Oggetto;
-import it.unicam.cs.mpgc.rpg130662.model.Pozione;
-import it.unicam.cs.mpgc.rpg130662.model.SchedaMostro;
+import it.unicam.cs.mpgc.rpg130662.model.*;
 import it.unicam.cs.mpgc.rpg130662.persistenza.RepositoryFile;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -266,7 +260,10 @@ public class FinestraPrincipale extends Application {
 
     /** Una carta per oggetto: icona, nome, descrizione e bottone Usa. */
     private VBox creaCarta(Oggetto o) {
-        String icona = o instanceof Pozione ? "🧪" : o instanceof Arma ? "⚔" : "🎒";
+        String icona = o instanceof Pozione || o instanceof PozioneTotale ? "🧪"
+                : o instanceof Arma ? "⚔"
+                : o instanceof ArmaMonouso ? "💎"
+                : "🎒";
 
         Label iconaLabel = new Label(icona);
         iconaLabel.getStyleClass().add("carta-icona");

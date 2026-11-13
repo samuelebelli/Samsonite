@@ -1,4 +1,6 @@
-EROE;Sammy;100;9;10
+EROE;samu;100;84;10
 CAPIENZA;5
 POZIONE;Pozione piccola;20
 ARMA;Aumenta l'attacco di 5;5
+POZIONETOTALE;Elisir completo
+ARMAMONOUSO;Spada di diamante;30
