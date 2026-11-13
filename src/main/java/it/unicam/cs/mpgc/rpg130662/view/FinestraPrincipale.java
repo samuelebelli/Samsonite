@@ -179,7 +179,7 @@ public class FinestraPrincipale extends Application {
         Button nuova = new Button("Nuova partita");
         nuova.setOnAction(e -> scena.setRoot(creaSchermataIniziale()));
 
-        HBox comandi = new HBox(10, salva, carica, nuova);
+        HBox comandi = new HBox(10, salva, nuova);
 
         VBox radice = new VBox(14, titolo, centro, comandi, messaggio);
         radice.getStyleClass().add("schermata-gioco");
@@ -213,31 +213,13 @@ public class FinestraPrincipale extends Application {
         titolo.getStyleClass().add("titolo-sconfitta");
         Label testo = new Label(controller.getTestoNome() + " è caduto in battaglia... 😢");
 
-        Label errore = new Label();
-        errore.getStyleClass().add("errore");
-
-        Button riprova = new Button("Nuova partita");
-        riprova.setOnAction(e -> {
+        Button menu = new Button("Torna al menu");
+        menu.setOnAction(e -> {
             controller.terminaCombattimento();
             scena.setRoot(creaSchermataIniziale());
         });
 
-        Button carica = new Button("Carica ultimo salvataggio");
-        carica.setOnAction(e -> {
-            try {
-                controller.carica();
-                registro.clear();
-                messaggio.setText("Partita caricata");
-                scena.setRoot(creaSchermataGioco());
-            } catch (IOException ex) {
-                errore.setText("Nessun salvataggio valido: " + ex.getMessage());
-            }
-        });
-
-        HBox bottoni = new HBox(10, riprova, carica);
-        bottoni.setAlignment(Pos.CENTER);
-
-        VBox radice = new VBox(15, titolo, testo, bottoni, errore);
+        VBox radice = new VBox(15, titolo, testo, menu);
         radice.setAlignment(Pos.CENTER);
         radice.getStyleClass().add("schermata-sconfitta");
         return radice;
