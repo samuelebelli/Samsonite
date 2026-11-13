@@ -7,6 +7,7 @@ public class Eroe {
     private final int puntiVitaMassimiGiocatore;
     private int puntiVitaGiocatore;
     private int attaccoEroe;
+    private int bonusColpo;
 
     /** Crea un eroe con la vita al massimo. */
     public Eroe(String nome, int puntiVitaMassimiGiocatore, int attacco) {
@@ -66,4 +67,15 @@ public class Eroe {
         attaccoEroe += bonus;
     }
 
+    /** Aggiunge un bonus che vale solo per il prossimo attacco. */
+    public void caricaColpo(int bonus) {
+        bonusColpo += bonus;
+    }
+
+    /** Restituisce il danno di questo attacco e consuma il bonus del colpo. */
+    public int usaAttacco() {
+        int totale = attaccoEroe + bonusColpo;
+        bonusColpo = 0;
+        return totale;
+    }
 }

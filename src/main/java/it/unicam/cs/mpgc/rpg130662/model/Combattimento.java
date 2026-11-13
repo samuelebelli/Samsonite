@@ -13,7 +13,7 @@ public class Combattimento {
 
     /** L'eroe colpisce; se il mostro è ancora vivo, risponde. */
     public RisultatoTurno turno() {
-        int dannoAlMostro = eroe.getAttaccoEroe();
+        int dannoAlMostro = eroe.usaAttacco();
         mostro.subisciDanno(dannoAlMostro);
 
         int dannoAlEroe = 0;
