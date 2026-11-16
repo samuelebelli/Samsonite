@@ -27,7 +27,7 @@ public class ArmaMonouso implements Oggetto{
 
     @Override
     public String getDescrizione() {
-        return "Il prossimo colpo infligge " + danno + " danni extra (monouso)";
+        return "Il prossimo colpo infligge " + danno + " danni (monouso)";
     }
 
     @Override
