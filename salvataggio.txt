@@ -1,4 +1,4 @@
-EROE;samu;100;84;10
+EROE;g;100;100;10
 CAPIENZA;5
 POZIONE;Pozione piccola;20
 ARMA;Aumenta l'attacco di 5;5

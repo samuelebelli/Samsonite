@@ -74,7 +74,7 @@ public class Eroe {
 
     /** Restituisce il danno di questo attacco e consuma il bonus del colpo. */
     public int usaAttacco() {
-        int totale = attaccoEroe + bonusColpo;
+        int totale = bonusColpo > 0 ? bonusColpo : attaccoEroe;
         bonusColpo = 0;
         return totale;
     }
