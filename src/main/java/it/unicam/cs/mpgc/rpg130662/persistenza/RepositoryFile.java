@@ -27,15 +27,7 @@ public class RepositoryFile implements RepositoryPartita {
                 + ";" + eroe.getPuntiVita() + ";" + eroe.getAttaccoEroe());
         righe.add("CAPIENZA;" + inventario.getCapienza());
         for (Oggetto o : inventario.getOggetti()) {
-            if (o instanceof Arma a) {
-                righe.add("ARMA;" + a.getNome() + ";" + a.getBonusAttacco());
-            } else if (o instanceof Pozione p) {
-                righe.add("POZIONE;" + p.getNome() + ";" + p.getCura());
-            } else if (o instanceof PozioneTotale t) {
-            righe.add("POZIONETOTALE;" + t.getNome());
-            } else if (o instanceof ArmaMonouso m) {
-            righe.add("ARMAMONOUSO;" + m.getNome() + ";" + m.getDanno());
-        }
+            righe.add(o.getTipo() + ";" + o.getNome() + ";" + o.getValore());
         }
         Files.write(percorso, righe);
     }
