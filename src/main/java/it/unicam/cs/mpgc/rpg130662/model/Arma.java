@@ -36,4 +36,15 @@ public class Arma implements Oggetto {
         public void usa(Eroe eroe) {
             eroe.aumentaAttacco(BonusAttacco);
         }
+
+    @Override
+    public String getTipo() {
+        return "ARMA";
+    }
+
+    @Override
+    public int getValore() {
+        return BonusAttacco;
+    }
+
     }

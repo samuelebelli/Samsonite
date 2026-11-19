@@ -34,4 +34,15 @@ public class ArmaMonouso implements Oggetto{
     public void usa(Eroe eroe) {
         eroe.caricaColpo(danno);
     }
+
+    @Override
+    public String getTipo() {
+        return "ARMAMONOUSO";
+    }
+
+    @Override
+    public int getValore() {
+        return danno;
+    }
+
 }

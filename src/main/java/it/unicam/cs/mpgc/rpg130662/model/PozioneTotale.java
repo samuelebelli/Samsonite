@@ -25,4 +25,14 @@ public class PozioneTotale implements Oggetto{
     public void usa(Eroe eroe) {
         eroe.cura(eroe.getPuntiVitaMassimiGiocatore());
     }
+
+    @Override
+    public String getTipo() {
+        return "POZIONETOTALE";
+    }
+
+    @Override
+    public int getValore() {
+        return 0;
+    }
 }

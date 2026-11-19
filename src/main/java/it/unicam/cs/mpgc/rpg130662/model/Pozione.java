@@ -36,4 +36,14 @@ public class Pozione implements Oggetto{
     public void usa(Eroe eroe) {
         eroe.cura(cura);
     }
+
+    @Override
+    public String getTipo() {
+        return "POZIONE";
+    }
+
+    @Override
+    public int getValore() {
+        return cura;
+    }
 }
