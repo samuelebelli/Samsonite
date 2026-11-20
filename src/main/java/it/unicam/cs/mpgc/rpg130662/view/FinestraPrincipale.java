@@ -331,14 +331,6 @@ public class FinestraPrincipale extends Application {
 
     /** Partita segnaposto: viene sostituita da nuovaPartita() con "Avvia partita". */
     private ControllerPrincipale creaController() {
-        Inventario inventario = new Inventario(5);
-        inventario.aggiungi(new Pozione("Pozione piccola", 20));
-        inventario.aggiungi(new Arma("Spada di ferro", 5));
-        Gioco gioco = new Gioco(
-                new Eroe("Eroe", 100, 10),
-                inventario,
-                List.of(new SchedaMostro("Goblin", 30, 8),
-                        new SchedaMostro("Orco", 60, 15)));
-        return new ControllerPrincipale(gioco, new RepositoryFile(Path.of("salvataggio.txt")));
+        return new ControllerPrincipale(new RepositoryFile(Path.of("salvataggio.txt")));
     }
 }

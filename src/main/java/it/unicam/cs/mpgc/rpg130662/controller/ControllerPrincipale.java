@@ -15,8 +15,8 @@ public class ControllerPrincipale {
     private Combattimento combattimento;
     private int vitaMassimaMostro;
 
-    public ControllerPrincipale(Gioco gioco, RepositoryPartita repository) {
-        this.gioco = gioco;
+    public ControllerPrincipale(RepositoryPartita repository) {
+        this.gioco = PartitaIniziale.crea("Eroe");
         this.repository = repository;
     }
 
@@ -111,12 +111,7 @@ public class ControllerPrincipale {
         if (nomeEroe.contains(";")) {
             throw new IllegalArgumentException("Il nome non può contenere ';'");
         }
-        Inventario inventario = new Inventario(5);
-        inventario.aggiungi(new Pozione("Pozione piccola", 20));
-        inventario.aggiungi(new Arma("Spada di ferro", 5));
-        inventario.aggiungi(new PozioneTotale("Elisir completo"));
-        inventario.aggiungi(new ArmaMonouso("Spada di diamante", 30));
-        gioco = new Gioco(new Eroe(nomeEroe, 100, 10), inventario, gioco.getMostriDisponibili());
+        gioco = PartitaIniziale.crea(nomeEroe);
         combattimento = null;
     }
 
