@@ -242,10 +242,12 @@ public class FinestraPrincipale extends Application {
 
     /** Una carta per oggetto: icona, nome, descrizione e bottone Usa. */
     private VBox creaCarta(Oggetto o) {
-        String icona = o instanceof Pozione || o instanceof PozioneTotale ? "🧪"
-                : o instanceof Arma ? "⚔"
-                : o instanceof ArmaMonouso ? "💎"
-                : "🎒";
+        String icona = switch (o.getTipo()) {
+            case "POZIONE", "POZIONETOTALE" -> "🧪";
+            case "ARMA" -> "⚔";
+            case "ARMAMONOUSO" -> "💎";
+            default -> "🎒";
+        };
 
         Label iconaLabel = new Label(icona);
         iconaLabel.getStyleClass().add("carta-icona");
