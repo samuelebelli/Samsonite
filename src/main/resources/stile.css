@@ -155,6 +155,7 @@
 .carta-nome {
     -fx-font-weight: bold;
     -fx-text-fill: #ffb347;
+    -fx-text-alignment: center;
 }
 
 .carta-descrizione {
@@ -192,4 +193,9 @@
 .carta-mostro:hover {
     -fx-border-color: #ff7b00;
     -fx-background-color: #2e1214;
+}
+
+.carta-icona {
+    -fx-font-size: 32px;
+    -fx-font-family: "Segoe UI Emoji";
 }

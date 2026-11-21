@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.layout.Region;
 
 
 import java.io.IOException;
@@ -243,7 +244,8 @@ public class FinestraPrincipale extends Application {
     /** Una carta per oggetto: icona, nome, descrizione e bottone Usa. */
     private VBox creaCarta(Oggetto o) {
         String icona = switch (o.getTipo()) {
-            case "POZIONE", "POZIONETOTALE" -> "🧪";
+            case "POZIONE" -> "💊";
+            case "POZIONETOTALE" -> "❤";
             case "ARMA" -> "⚔";
             case "ARMAMONOUSO" -> "💎";
             default -> "🎒";
@@ -251,10 +253,15 @@ public class FinestraPrincipale extends Application {
 
         Label iconaLabel = new Label(icona);
         iconaLabel.getStyleClass().add("carta-icona");
+
         Label nomeLabel = new Label(o.getNome());
+        nomeLabel.setWrapText(true);
+        nomeLabel.setMinHeight(Region.USE_PREF_SIZE);
         nomeLabel.getStyleClass().add("carta-nome");
+
         Label descrizione = new Label(o.getDescrizione());
         descrizione.setWrapText(true);
+        descrizione.setMinHeight(Region.USE_PREF_SIZE);
         descrizione.getStyleClass().add("carta-descrizione");
 
         Button usa = new Button("Usa");

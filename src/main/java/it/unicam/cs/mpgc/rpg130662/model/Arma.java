@@ -20,11 +20,7 @@ public class Arma implements Oggetto {
 
         @Override
         public String getNome() {
-            return "Aumenta l'attacco di " + BonusAttacco;
-        }
-
-        public int getBonusAttacco() {
-            return BonusAttacco;
+            return Nome;
         }
 
         @Override
